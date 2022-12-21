@@ -70,16 +70,24 @@ def dim_lcov_report(doc):
 
     modified_and_not_covered_lines = []
 
+    wasDeleted = False
     for line_num_span in doc.xpath("//*[@class='lineNum']"):
-        line_num = int(line_num_span.text)
-
+        line_a = line_num_span.getparent()
+        if line_num_span.text.strip().isspace() or line_num_span.text.strip() == "":
+            line_a.getparent().remove(line_a)
+            wasDeleted = True
+            continue
+        line_num = int(line_num_span.text.strip())
         line_a = line_num_span.getparent()
 
-        line_a.addprevious(E.A("#", href = "#" + str(line_num)))
-
         if source_code_file not in modified_lines or line_num not in modified_lines[source_code_file]:
-            line_a.set("style", dim_style)
+            line_a.getparent().remove(line_a)
+            wasDeleted = True
         else:
+            if wasDeleted:
+                line_a.addprevious(E.HR())
+                wasDeleted = False
+
             if len(line_a.xpath(".//*[@class='lineNoCov']")) > 0:
                 modified_and_not_covered_lines.append(line_num)
 

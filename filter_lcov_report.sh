@@ -22,6 +22,7 @@ cat > "${MODIFIED_AND_NOT_COVERED_HTML}" <<HTML_BEGIN
 HTML_BEGIN
 
 for f in $(find "${COVERAGE_LCOV_HTML_DIR}" -name "*.gcov.html" |sort) ; do
+    echo "Processing ${f}..."
     $(dirname "${0}")/filter_report.py \
         -lcov \
         "${MODIFIED_JSON_FILE}" \
